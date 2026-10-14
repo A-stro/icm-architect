@@ -2,13 +2,13 @@
 
 The sixth form. Read this when the repeating unit is **a folder someone will change**: a repo, a markdown vault, or a mix. The deliverable is not a run and not a company chart. It is a walkable graph: what the nouns are, how they move, and what else moves if you touch one.
 
-Do not restate the ten invariants or the other five forms. Those live in `SKILL.md` and `forms.md`.
+Do not restate the ten invariants or the other forms. Those live in `SKILL.md` and `forms.md`.
 
 ## When to use it
 
 The user wants to work on a tree they do not hold in their head: “map this repo,” “audit this folder,” “what would a change hit,” “make this editable for the next agent.” The tree may be code, markdown, or both.
 
-Do **not** use this form when they want a repeating production line (Pipeline), a company/team graph (Context map), or a model of how someone thinks (Knowledge bundle).
+Do **not** use this form when they want a repeating production line (Pipeline), a company/team graph (Context map), a model of how someone thinks (Knowledge bundle), or the ideas behind the code laid out to teach from (Concept map).
 
 If the tree is small enough that one `CONTEXT.md` plus an index answers “what is X” and “what else moves,” stop there. Do not scaffold `objects/` / `processes/` / `effects/` for a dozen files.
 

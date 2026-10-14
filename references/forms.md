@@ -1,8 +1,8 @@
-# The Six Forms
+# The Seven Forms
 
-One skeleton, six jobs. Every form obeys the ten invariants; what changes is what the repeating unit is and what the structure optimizes for. All six are drawn from production workspaces, not theory.
+One skeleton, seven jobs. Every form obeys the ten invariants; what changes is what the repeating unit is and what the structure optimizes for. All seven are drawn from production workspaces, not theory.
 
-Contents: Selection · 1 Pipeline · 2 Umbrella · 3 Record library · 4 Knowledge bundle · 5 Context map · 6 System map · Composing forms
+Contents: Selection · 1 Pipeline · 2 Umbrella · 3 Record library · 4 Knowledge bundle · 5 Context map · 6 System map · 7 Concept map · Composing forms
 
 ## Selection
 
@@ -16,6 +16,7 @@ Ask one question first: **what is the repeating unit of work?**
 | the knowledge itself (claims, notes, evidence) | Knowledge bundle |
 | an organization (teams, processes, data, handoffs) | Context map |
 | a folder later agents must edit (code, markdown, or mixed) | System map |
+| ideas someone will teach or write up (lecture, course, script, article, docs) | Concept map |
 
 ## 1. Pipeline — the production line
 
@@ -111,7 +112,7 @@ workspace/
 - `access_tier` gates what may leave the machine: patterns abstracted from private sources are fine; raw quotes are not.
 - Regenerating the bundle is a factory run; every change appends to a log.
 
-**Watch for:** the bundle read as a search index instead of a model (it answers "how does this think," not "find me the file"); frontmatter fields nobody queries (cut them); extraction runs that edit the product by hand (fix the factory).
+**Watch for:** the bundle read as a search index instead of a model (it answers "how does this think," not "find me the file"); frontmatter fields nobody queries (cut them); extraction runs that edit the product by hand (fix the factory). If the bundle's real job is to feed a lecture, script, or doc set, the form is Concept map.
 
 ## 5. Context map — the organization as a graph
 
@@ -163,11 +164,40 @@ subject/
 - The subject tree remains authoritative. Cards cite `path:line` (code) or the owning file (markdown). Aspiration and dead types are `ghost`, not live.
 - Slices are gated: inventory → catalog → nouns → verbs → impact index → re-verify. Empty `processes/` / `effects/` folders are forbidden.
 - **Hits / Does not hit** is the waterfall. “Does not hit” names the obvious next noun that is the wrong one.
-- Compose with Record library (the cards) inside this form. Do not confuse this with Context map (an org) or Knowledge bundle (how something thinks).
+- Compose with Record library (the cards) inside this form. Do not confuse this with Context map (an org), Knowledge bundle (how something thinks), or Concept map (ideas to teach).
 
 **Watch for:** copying behaviour into cards; mapping intent docs as live; two hand-edited entry files; marking `verified` without a citation.
 
 The audit pipeline, card sections, and walk test for this form: [system-map.md](system-map.md).
+
+## 7. Concept map — ideas and their evidence
+
+The subject is a body of ideas someone will teach or write up. Sources go in; lectures, scripts, courses, or docs come out later. The map holds the ideas, the speaker's own words behind each, and the plans that say which artifact uses which. It is not a model of how someone thinks (Knowledge bundle) and not an edit map of a tree (System map).
+
+```
+subject-map/
+├─ CLAUDE.md                 catalog (twin: AGENTS.md)
+├─ _meta/                    schema.md, sources.txt, keep-out.txt
+├─ _tools/check-concept-map.py
+├─ sources/                  raw/ (verbatim, never edited) + one note per source
+├─ concepts/                 one idea per file, the speaker's words under it
+├─ plans/                    one artifact per file, plus map.md
+└─ checks/                   claims to verify, lines to rework, what stays out
+```
+
+Each shelf has a `CONTEXT.md` (its contract) and a generated `_index.md`. The speaker is whoever's words are in the sources; the author builds the artifact. They are often the same person. Size it to the corpus: an outline for one short source and one artifact, a light map (sources, concepts, plans) for a short corpus, the full tree for long sources.
+
+**Defining moves:**
+- The sources stay inside the map, verbatim, and every quoted line carries `(key position)`. A script checks each quote against the raw source; a line it cannot find does not ship.
+- The speaker's words and the agent's words never share a line: verbatim under “In their words,” the agent's reading under “Note,” marked as a proposal.
+- Each concept carries “Where it stops”: the speaker's own limits. The loud version of an idea is rarely the whole of it.
+- A plan is a route through the concepts plus what only the speaker or the author can supply (“Open”). It never holds the artifact.
+- People in the sources are described by role, never named; the raw copies are the only place names live.
+- Claims are checked before the plans are written, not after the artifact.
+
+**Watch for:** a map that summarizes the sources instead of splitting them into ideas; quotes tidied until they stop matching; plans that contain the script; stories invented to fill a spine; note types multiplying past what anyone queries.
+
+The build pipeline, note sections, and walk test for this form: [concept-map.md](concept-map.md).
 
 ## Composing forms
 
@@ -178,5 +208,7 @@ The forms nest, because the invariants are recursive:
 - An **umbrella** over pipelines that all draw on one **knowledge bundle** as their factory layer.
 - A **context map** whose per-team folders each grow a small **pipeline** for their pilot process.
 - An **umbrella** or repo whose `developer-docs/` (or vault root) hosts a **system map** of the subject beside a setup **pipeline**.
+- A **concept map** whose plans feed a **pipeline**: its first stage reads one plan and the concepts that plan names, never the whole map.
+- A **knowledge bundle** of an author's voice beside a **concept map** of what they teach; a **system map** of a codebase beside a **concept map** of the ideas a newcomer must hold before the cards make sense.
 
 When composing, keep one rule absolute: each level has its own small catalog, and no level's catalog describes the internals of the level below — it links down and stops.

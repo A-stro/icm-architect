@@ -13,10 +13,10 @@ The workspace is a library. The routing files are the catalog: small, stable, th
 
 Two modes:
 
-- **Build** — extracts the structure already present in how you describe your work (the stages, the human gates, what's stable vs. per-run), picks one of six proven forms, and scaffolds the smallest workspace that carries it.
+- **Build** — extracts the structure already present in how you describe your work (the stages, the human gates, what's stable vs. per-run), picks one of seven proven forms, and scaffolds the smallest workspace that carries it.
 - **Restructure** — audits an existing folder, classifies every file (catalog / contract / factory / product / dead), proposes a migration map for approval, then migrates and validates.
 
-Six forms, one skeleton: **Pipeline** (production line), **Umbrella** (portfolio of pipelines), **Record library** (people/clients/sessions), **Knowledge bundle** (a navigable brain), **Context map** (an organization as a graph), **System map** (a folder later agents will edit — nouns, movements, change-impact). They compose and recurse.
+Seven forms, one skeleton: **Pipeline** (production line), **Umbrella** (portfolio of pipelines), **Record library** (people/clients/sessions), **Knowledge bundle** (a navigable brain), **Context map** (an organization as a graph), **System map** (a folder later agents will edit — nouns, movements, change-impact), **Concept map** (ideas and the speaker's own words, checked against the sources, shaped to build lectures, scripts, and docs from). They compose and recurse.
 
 Every result is validated with the **walk test**: an agent with no memory must orient, act, and report status from the files alone.
 
@@ -33,11 +33,15 @@ icm-architect/
 ├─ SKILL.md              the method: invariants, build mode, restructure mode, walk test
 ├─ references/
 │  ├─ core.md                 five principles, five-layer hierarchy, naming, token discipline
-│  ├─ forms.md                the six forms in depth: skeletons, moves, failure modes
+│  ├─ forms.md                the seven forms in depth: skeletons, moves, failure modes
 │  ├─ system-map.md           audit pipeline for the System map form
+│  ├─ concept-map.md          build pipeline for the Concept map form
 │  └─ reference-integrity.md  restructure move-safety gate
-└─ assets/templates/     copyable starters: CLAUDE.md, CONTEXT.md, stage contract,
-                         node card, object/process cards, schema, questionnaire
+├─ assets/templates/     copyable starters: CLAUDE.md, CONTEXT.md, stage contract,
+│                        node card, object/process cards, schema, questionnaire,
+│                        concept/plan/source/check cards, concept schema,
+│                        concept entry file, shelf contract, keep-out list
+└─ assets/tools/         check-concept-map.py: links, types, and quotes for a concept map
 ```
 
 MIT licensed, like the protocol it serves.
