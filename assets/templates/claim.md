@@ -1,8 +1,9 @@
 ---
-type: check
-title: {Claims to check before they are said}
+type: claim
 description: {Numbers and general claims the concepts lean on, how each was checked, and the safe version of each line.}
 ---
+
+# {Claims to check before they are said}
 
 How this was checked, and when: {date; which tools. A search summary is a lead, not a source.}
 

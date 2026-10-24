@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Check a concept map: links resolve, note types sit in the schema, every quoted line appears
-word for word in its raw source, and nothing on the keep-out list shows up anywhere.
+"""Check that every quoted line appears word for word in its raw source, and that nothing on the
+keep-out list appears outside the raw sources. Exit 1 on any problem; read the warnings too.
 
-Copy this file to _tools/ in the map and run from anywhere:  python -I _tools/check-concept-map.py
-Standard library only. Exits 1 on any problem; warnings do not fail the run but should be read.
+Copy to _tools/ in a bundle built from sources and run from anywhere:
+    python -I _tools/quotes.py [ROOT] [--show-cuts]
+ROOT defaults to the folder that holds _tools/. Standard library only.
 
 A quote is  "verbatim line" (key position)  where
   key       names a file in sources/raw/ (its name without the extension, or a short name
@@ -14,16 +15,13 @@ Transcripts are timed when their lines start with **[12:30]** or [12:30]. A docu
 it has lines that read  Page 1, Page 2 ... ; any other source is matched anywhere and its position
 is not checked. A cut inside a quote is written ... and each piece is checked in order.
 A timed quote is accepted within one paragraph of its cited position, since a line can straddle two.
-
-Options
-  --show-cuts         list every quote that uses a cut, with the words the cut drops
-  --write-indexes     (re)write each shelf's _index.md from its notes' title and description
-  --tokens PLAN       approximate size of the entry file + that plan + its first three concepts
+Every bullet under an "In their words" heading must be a cited quote, and a cut must not drop a
+negation. Keep-out phrases (_meta/keep-out.txt, one per line, whole words, any case) fail anywhere
+outside sources/raw/ and _meta/, frontmatter included. --show-cuts lists what every cut drops.
 """
 import bisect
 import re
 import sys
-import urllib.parse
 from pathlib import Path
 
 try:
@@ -31,12 +29,9 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parent.parent
-RAW = ROOT / "sources" / "raw"
 SKIP_DIRS = {"raw", "_meta", "_tools", "_templates", ".git"}
-NOT_NOTES = {"index.md", "_index.md", "log.md", "claude.md", "agents.md", "context.md", "routing.md"}
+NOT_NOTES = {"index.md", "_index.md", "log.md", "claude.md", "agents.md", "context.md"}
 TIME = r"\d+(?::\d+)+"
-LINK = re.compile(r"\[[^\]]*\]\((<[^>]+>|[^)\s]+)\)")
 QUOTE = re.compile(r'"([^"\n]+?)"\s*\(([A-Za-z0-9_.-]+)(?:\s+([^)]*))?\)')
 ANY_QUOTE = re.compile(r'"([^"\n]+)"')
 POSITION = re.compile(rf"({TIME})(?:\s*[–-]\s*({TIME}))?")
@@ -47,7 +42,7 @@ WORDS_HEADING = re.compile(r"#{1,6}\s*in\s+(their|his|her|the speaker'?s?)\s+wor
 NEGATION = re.compile(r"\b(never|not|no|none|nothing|nobody|without|cannot|neither|nor|hardly|"
                       r"cant|dont|doesnt|didnt|isnt|arent|wasnt|werent|wont|wouldnt|shouldnt|couldnt)\b")
 
-problems, warnings, cuts, stubs = [], [], [], []
+problems, warnings, cuts = [], [], []
 
 
 def norm(s):
@@ -79,20 +74,21 @@ def match_in_order(pieces, haystack):
     return None, gaps
 
 
-def load_sources():
-    files = {p.stem: p for p in sorted(RAW.glob("*")) if p.is_file()} if RAW.exists() else {}
-    aliases = ROOT / "_meta" / "sources.txt"
+def load_sources(root):
+    raw = root / "sources" / "raw"
+    files = {p.stem: p for p in sorted(raw.glob("*")) if p.is_file()} if raw.exists() else {}
+    aliases = root / "_meta" / "sources.txt"
     if aliases.exists():
-        for line in aliases.read_text(encoding="utf-8").splitlines():
+        for line in aliases.read_text(encoding="utf-8-sig").splitlines():
             if "=" in line and not line.lstrip().startswith("#"):
                 key, name = (x.strip() for x in line.split("=", 1))
-                if (RAW / name).is_file():
-                    files[key] = RAW / name
+                if (raw / name).is_file():
+                    files[key] = raw / name
                 else:
                     problems.append(f"_meta/sources.txt: {key} -> {name} is not in sources/raw/")
     sources = {}
     for key, path in files.items():
-        text = path.read_text(encoding="utf-8", errors="replace")
+        text = path.read_text(encoding="utf-8-sig", errors="replace")
         paras = []
         for line in text.splitlines():
             m = re.match(rf"\s*(?:\*\*)?\[({TIME})\](?:\*\*)?\s*(.*)", line)
@@ -151,31 +147,18 @@ def check_quote(text, key, position, sources):
     return None, None, gaps
 
 
-def front_matter(text):
+def body_of(text):
     if text.startswith("---"):
         end = text.find("\n---", 3)
         if end != -1:
-            return text[3:end], text[end + 4:]
-    return "", text
+            return text[end + 4:]
+    return text
 
 
-def field(front, name):
-    m = re.search(rf"^{name}:\s*(.+)$", front, re.M)
-    if not m:
-        return ""
-    v = m.group(1).strip()
-    return v[1:-1] if len(v) > 1 and v[0] == v[-1] and v[0] in "\"'" else v
-
-
-def read_list(path):
-    if not path.exists():
-        return []
-    lines = (x.strip() for x in path.read_text(encoding="utf-8").splitlines())
-    return [x for x in lines if x and not x.startswith("#")]
-
-
-def keep_out_patterns():
-    return [re.compile(r"(?<!\w)" + re.escape(p) + r"(?!\w)", re.I) for p in read_list(ROOT / "_meta" / "keep-out.txt")]
+def keep_out_patterns(root):
+    path = root / "_meta" / "keep-out.txt"
+    lines = (x.strip() for x in path.read_text(encoding="utf-8-sig").splitlines()) if path.exists() else ()
+    return [re.compile(r"(?<!\w)" + re.escape(p) + r"(?!\w)", re.I) for p in lines if p and not p.startswith("#")]
 
 
 def check_words_sections(rel, body, sources):
@@ -190,88 +173,25 @@ def check_words_sections(rel, body, sources):
                 problems.append(f"{rel}: a bullet under 'In their words' has no cited quote: {line.strip()[:60]}")
 
 
-def write_or_check_indexes(notes, write):
-    shelves = {}
-    for f, front in notes:
-        if f.parent != ROOT:
-            shelves.setdefault(f.parent, []).append((f, front))
-    for shelf, items in sorted(shelves.items()):
-        lines = ["<!-- generated by _tools/check-concept-map.py; do not edit -->", f"# {shelf.name.capitalize()}", ""]
-        for f, front in sorted(items, key=lambda x: x[0].name):
-            lines.append(f"* [{field(front, 'title') or f.stem}]({f.name}) - {field(front, 'description')}")
-        text = "\n".join(lines) + "\n"
-        target = shelf / "_index.md"
-        if write:
-            target.write_text(text, encoding="utf-8", newline="\n")
-            print(f"wrote {target.relative_to(ROOT).as_posix()}")
-        elif target.exists() and target.read_text(encoding="utf-8").strip() != text.strip():
-            problems.append(f"{target.relative_to(ROOT).as_posix()}: stale, run with --write-indexes")
-
-
-def tokens(plan_arg):
-    plan = (ROOT / plan_arg) if (ROOT / plan_arg).exists() else Path(plan_arg)
-    parts = [ROOT / "CLAUDE.md", plan]
-    linked = re.findall(r"\]\(([^)\s]*concepts/[^)\s#]+\.md)\)", plan.read_text(encoding="utf-8"))
-    parts += [(plan.parent / link).resolve() for link in dict.fromkeys(linked)][:3]
-    total = 0
-    for p in parts:
-        n = len(p.read_text(encoding="utf-8")) // 4 if p.exists() else 0
-        total += n
-        print(f"  ~{n:5d} tokens  {p.name}")
-    print(f"  ~{total:5d} tokens in all (stay under 8,000; the 2,000 floor is a guide for a full-size step, not a target)")
-
-
 def main():
-    args = sys.argv[1:]
-    if "--tokens" in args:
-        tokens(args[args.index("--tokens") + 1])
-        return
-    sources = load_sources()
-    schema = ROOT / "_meta" / "schema.md"
-    types = None
-    if schema.exists():
-        m = re.search(r"^types:\s*(.+)$", schema.read_text(encoding="utf-8"), re.M | re.I)
-        if m:
-            types = {t.strip().lower() for t in m.group(1).split(",") if t.strip()}
-    keep_out = keep_out_patterns()
+    args = [a for a in sys.argv[1:] if a != "--show-cuts"]
+    root = Path(args[0]).resolve() if args else Path(__file__).resolve().parent.parent
+    sources = load_sources(root)
+    keep_out = keep_out_patterns(root)
 
-    files = sorted(f for f in ROOT.rglob("*.md") if not SKIP_DIRS & set(f.relative_to(ROOT).parts))
-    counts, links, quotes, notes = {}, 0, 0, []
+    files = sorted(f for f in root.rglob("*.md") if not SKIP_DIRS & set(f.relative_to(root).parts))
+    notes, quotes = 0, 0
     for f in files:
-        rel = f.relative_to(ROOT).as_posix()
-        text = f.read_text(encoding="utf-8")
-        front, body = front_matter(text)
-        is_note = f.name.lower() not in NOT_NOTES
-
-        for pattern in keep_out:  # every file, frontmatter included
-            if pattern.search(text):
-                problems.append(f"{rel}: contains a phrase from _meta/keep-out.txt")
-                break
-
-        for m in LINK.finditer(body):
-            target = m.group(1)[1:-1] if m.group(1).startswith("<") else m.group(1)
-            if re.match(r"^[a-z]+:", target) or target.startswith("#"):
-                continue
-            links += 1
-            if not (f.parent / urllib.parse.unquote(target.split("#")[0])).resolve().exists():
-                problems.append(f"{rel}: broken link -> {target}")
-
-        if not is_note:
+        rel = f.relative_to(root).as_posix()
+        text = f.read_text(encoding="utf-8-sig", errors="replace")
+        if any(p.search(text) for p in keep_out):  # every file, frontmatter included
+            problems.append(f"{rel}: contains a phrase from _meta/keep-out.txt")
+        if f.name.lower() in NOT_NOTES:
             continue
-        notes.append((f, front))
-        if re.search(r"^status:\s*stub\b", front, re.M):
-            stubs.append(rel)
-        t = re.search(r"^type:\s*(\S+)", front, re.M)
-        note_type = t.group(1).lower() if t else None
-        counts[note_type or "(none)"] = counts.get(note_type or "(none)", 0) + 1
-        if note_type is None:
-            problems.append(f"{rel}: no type in the frontmatter")
-        elif types is not None and note_type not in types:
-            problems.append(f"{rel}: type '{note_type}' is not in _meta/schema.md")
-
-        text_q = straighten(body)
+        notes += 1
+        body = body_of(text)
         check_words_sections(rel, body, sources)
-        cited = set()
+        text_q, cited = straighten(body), set()
         for m in QUOTE.finditer(text_q):
             quote, key, position = m.group(1), m.group(2), m.group(3)
             cited.add(m.start())
@@ -295,13 +215,8 @@ def main():
             if m.start() not in cited and len(m.group(1).split()) >= 8:
                 warnings.append(f"{rel}: quoted words with no citation: {m.group(1)[:60]}")
 
-    if stubs:
-        warnings.append(f"{len(stubs)} stub note(s) remain: " + ", ".join(stubs[:6]) + (" ..." if len(stubs) > 6 else ""))
-    write_or_check_indexes(notes, "--write-indexes" in args)
-    print(f"{sum(counts.values())} notes, {links} links, {quotes} quotes checked, {len(cuts)} with cuts")
-    for name, n in sorted(counts.items()):
-        print(f"  {name}: {n}")
-    if "--show-cuts" in args:
+    print(f"{notes} notes, {quotes} quotes checked, {len(cuts)} with cuts")
+    if "--show-cuts" in sys.argv:
         for where, quote, gaps in cuts:
             print(f"  cut in {where}: \"{quote[:80]}\" drops: " + " | ".join(g[:50] for g in gaps))
     if warnings:
@@ -313,7 +228,7 @@ def main():
         for p in problems:
             print("  " + p)
         sys.exit(1)
-    print("ok: every link resolves, every quote matches its source")
+    print("ok: every quote matches its source")
 
 
 if __name__ == "__main__":
