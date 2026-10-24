@@ -16,7 +16,7 @@ Two roles. The **speaker** is whoever's words are in the sources. The **author**
 
 ```
 <subject>/
-├─ CLAUDE.md                 catalog: what artifacts exist, where to start
+├─ AGENTS.md                 catalog: what artifacts exist, where to start
 ├─ _meta/
 │  ├─ schema.md              note types, citation format, privacy (from bundle-schema.md)
 │  ├─ sources.txt            optional: short citation key = raw file name
@@ -50,7 +50,7 @@ Stop after each slice. A person reads the output before the next slice starts. T
 
 **0 — Frame.** Ask what will be built and for whom. Ask who the speaker is, who the author is, and who answers each check. Ask whose words must survive, what must not be said (names, embargoes, client confidences), and what a citation points at (a time, a page). List the sources and the artifacts. Propose the note types and get approval.
 
-**1 — Set up and bring the sources in.** Copy each source into `sources/raw/` untouched, and write one source note each, leaving its Parts table for slice 2. From this skill's `assets/`, copy `templates/bundle-schema.md` to `_meta/schema.md`, `templates/keep-out.txt` to `_meta/keep-out.txt` (names and anything the speaker asked to keep out go in now; matching is whole-word, so list each form: `budget`, `budgets`), `templates/CLAUDE.md` to `CLAUDE.md`, the cards you need to `_templates/`, and `tools/quotes.py`, `tools/links.py` and `tools/index.py` to `_tools/`. `quotes.py` should pass before any concept exists.
+**1 — Set up and bring the sources in.** Copy each source into `sources/raw/` untouched, and write one source note each, leaving its Parts table for slice 2. From this skill, copy `assets/templates/bundle-schema.md` to `_meta/schema.md`, `assets/templates/keep-out.txt` to `_meta/keep-out.txt` (names and anything the speaker asked to keep out go in now; matching is whole-word, so list each form: `budget`, `budgets`), `assets/templates/entry.md` to `AGENTS.md` (plus the one-line pointer for each agent that reads another name, per `references/core.md`, Naming), the cards you need to `_templates/`, and `scripts/quotes.py`, `scripts/links.py` and `scripts/index.py` to `_tools/`. `quotes.py` should pass before any concept exists.
 
 **2 — Read all of it.** Read every source whole before writing a note; sampling gives a map of the opening. List the distinct ideas each source makes, once each, and cluster them by how the artifact will ask for them, not by where they appeared. Write a stub for every planned note, concepts, plans and claims alike (frontmatter with `status: stub` and a one-line description, and the title as the first heading), so links resolve from the first batch. Fill each source note's Parts table. Present the cluster list. The speaker or author adds, merges, drops.
 
@@ -81,7 +81,7 @@ A script can prove a quote is in the source. It cannot prove a paraphrase is fai
 
 A cold agent, no memory of the sources:
 
-1. Open `CLAUDE.md`. Can it say what artifacts exist and where to start?
+1. Open `AGENTS.md`. Can it say what artifacts exist and where to start?
 2. Open one plan. Can it list the spine and the speaker's best lines without opening a raw source?
 3. Do `quotes.py` and `links.py` pass, with no stub left in any `_index.md`?
 4. Open one concept. Does the unmarked paragraph say only what the quoted lines say? Anything beyond them sits under Note.

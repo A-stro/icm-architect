@@ -1,20 +1,21 @@
 ---
 name: icm-architect
 description: Design a process, idea or body of knowledge into an ICM (Interpretable Context Methodology) workspace, where folder structure is the agent architecture, or restructure an existing folder, repo or vault into one. Use for "make this an ICM", "ICM this", "build me a workspace", "structure this for agents", "map this repo", "audit this folder", "what would a change hit", a second brain, team brain or context map, or turning transcripts and research into material for lectures, scripts or docs.
+license: MIT
 ---
 
 # ICM Architect
 
 Build workspaces where the folder structure does the orchestration. One agent, reading the right files at the right moment, replaces a multi-agent framework: numbered folders carry sequencing, hierarchy carries context scoping, plain markdown files carry state. A person can open any folder and see what state the system is in, because state is just files. The routing files are the catalog: small and stable, they point at the shelves where the content lives.
 
-Method: Interpretable Context Methodology (Van Clief & McDermott, arXiv:2603.16021, MIT-licensed).
+Method: Interpretable Context Methodology (Van Clief & McDermott, arXiv:2603.16021, MIT-licensed). It runs in any agent or model that can read files: nothing in a workspace depends on one vendor's tools.
 
 ## The invariants
 
-Every ICM starts from these ten. They are defaults: when you know what works and need a nuanced change, break one on purpose and write why in the nearest `CONTEXT.md` or `CLAUDE.md`.
+Every ICM starts from these ten. They are defaults: when you know what works and need a nuanced change, break one on purpose and write why in the nearest `CONTEXT.md` or `AGENTS.md`.
 
 1. **One folder, one job** (Unix, Parnas). Each folder does a single step or holds a single kind of thing, and states its own purpose in a file inside itself. The structure is the documentation.
-2. **A small, stable entry file.** `CLAUDE.md` at the root answers "where am I, where does everything live, where do I go for task X" and nothing else. Under ~60 lines; it routes and never holds content. `AGENTS.md`, if wanted, is a one-line pointer to it.
+2. **A small, stable entry file.** `AGENTS.md` at the root answers "where am I, where does everything live, where do I go for task X" and nothing else. Under ~60 lines; it routes and never holds content. A tool that looks for another file name gets a one-line pointer to it, never a second copy (see [references/core.md](references/core.md), Naming).
 3. **Numbering encodes order.** `01_`, `02_`, ... where sequence matters.
 4. **Every working folder has a contract.** A `CONTEXT.md`: what it reads (inputs), what it does (process), what it writes (outputs), how it is checked. See [assets/templates/stage-CONTEXT.md](assets/templates/stage-CONTEXT.md).
 5. **Factory vs. product** (continuous delivery). Reference material (rules, voice, schemas, templates: stable across runs) lives apart from working artifacts (outputs, drafts: new every run), because they ask different things of the model: references constrain, inputs are worked on. Configure the factory once; the product is what each run emits.
@@ -37,7 +38,7 @@ Every ICM is built from three things:
 
 - **Sequence**: numbered folders; each step's `output/` is the next step's input.
 - **Shelf**: a folder of same-shaped files, each copied from one template.
-- **Catalog**: a small file that points down and stores no content: `CLAUDE.md`, a `CONTEXT.md`, a generated index or graph.
+- **Catalog**: a small file that points down and stores no content: `AGENTS.md`, a `CONTEXT.md`, a generated index or graph.
 
 The forms below are recipes over these. Nest them freely; each level keeps its own small catalog that links down and stops. An Umbrella is one catalog over several pipelines, with their shared shelf at the root. When no form fits, build from the three and name the recipe in the entry file.
 
@@ -63,9 +64,9 @@ Their pauses become stage boundaries. Their "I always check X before Y" become c
 | **Context map** | shelves of teams, processes and data, linked by `consumes:` / `produces:` | the subject is an organization |
 | **System map** | shelves of nouns and verbs plus an impact index, filled by a gated sequence | a tree later agents will edit |
 
-**3. Scaffold the smallest structure that carries the work.** Copy starters from [assets/templates/](assets/templates/) and the tools you need from [assets/tools/](assets/tools/) into `_tools/`. Do not create folders for stages that don't exist yet, empty "misc" buckets, or speculative depth. Three real stages beat seven imagined ones. If the whole job fits in one saved prompt, say so and don't build a workspace at all.
+**3. Scaffold the smallest structure that carries the work.** Copy starters from [assets/templates/](assets/templates/) and the scripts you need from [scripts/](scripts/) into `_tools/`. Do not create folders for stages that don't exist yet, empty "misc" buckets, or speculative depth. Three real stages beat seven imagined ones. If the whole job fits in one saved prompt, say so and don't build a workspace at all.
 
-**4. Write the contracts.** Root `CLAUDE.md` (identity + routing table), root `CONTEXT.md` (the pipeline or schema), one `CONTEXT.md` per working folder, `setup/questionnaire.md` if the factory needs configuring per user. Inputs are exact backticked paths, split into working (this run) and reference (every run).
+**4. Write the contracts.** Root `AGENTS.md` (identity + routing table, from `assets/templates/entry.md`), plus the one-line pointer for each agent the owner uses that reads another name, always including the one you are running in ([references/core.md](references/core.md), Naming); root `CONTEXT.md` (the pipeline or schema), one `CONTEXT.md` per working folder, `setup/questionnaire.md` if the factory needs configuring per user. Inputs are exact backticked paths, split into working (this run) and reference (every run).
 
 **5. Validate with the walk test** (below).
 
@@ -76,7 +77,7 @@ Their pauses become stage boundaries. Their "I always check X before Y" become c
 **2. Find the hidden form.** Ask the owner (or infer and confirm): what is the repeating unit here? Where does work enter and leave? The mess usually contains a real pipeline, library, or map that grew without a skeleton: extract it, don't replace it.
 
 **3. Classify every file** into one of five roles:
-- **Catalog**: identity and routing (becomes or feeds `CLAUDE.md` and index files)
+- **Catalog**: identity and routing (becomes or feeds `AGENTS.md` and index files; an existing `CLAUDE.md`, `GEMINI.md` or similar becomes a one-line pointer once its content has a home in `AGENTS.md` or a shelf, at step 6)
 - **Contract**: how a step works (becomes a `CONTEXT.md`)
 - **Factory**: stable reference (goes to `_shared/`)
 - **Product**: run-specific artifacts (goes to a stage's `output/` or a record folder)
@@ -86,7 +87,7 @@ Their pauses become stage boundaries. Their "I always check X before Y" become c
 
 **5. Propose before moving.** Present the target tree and a migration map (old path, new path, role, referrers found). Get approval against step 4's findings. This is a check in a method built on checks: honor it.
 
-**6. Migrate: copy, verify, then remove.** Confirm the workspace is tracked or backed up first. Before any copy or rename, check whether the destination already exists case-folded: on Windows and macOS, `CLAUDE.md` -> `CONTEXT.md` silently overwrites an existing `context.md`, and a file inventory will not show the collision; surface every hit at the approval gate. Copy to the new home, verify parity (file count and content hash; for zipped office formats, compare the unzipped content), then remove the original, leaving a link where anything referred to it. Write the entry file and contracts, and dedupe toward one home per fact. If the structure will be reused, keep the blank template apart from this filled-in deployment.
+**6. Migrate: copy, verify, then remove.** Confirm the workspace is tracked or backed up first. Before any copy or rename, check whether the destination already exists case-folded: on Windows and macOS, renaming a file to `CONTEXT.md` silently overwrites an existing `context.md`, and a file inventory will not show the collision; surface every hit at the approval gate. Copy to the new home, verify parity (file count and content hash; for zipped office formats, compare the unzipped content), then remove the original, leaving a link where anything referred to it. Write the entry file and contracts, and dedupe toward one home per fact. If the structure will be reused, keep the blank template apart from this filled-in deployment.
 
 **7. Validate with the walk test.**
 
@@ -99,7 +100,7 @@ Walk it cold, as an agent with no memory:
 - Can you state status purely from what exists on disk, including any `check.md` verdicts?
 - Is any routing file carrying content? Move it to a shelf; leave a pointer.
 - Is any fact stored in two places? Pick one home; link from the other.
-- Does `python -I _tools/links.py` pass? After a restructure, it shows every link and contract input inside the tree still resolves; consumers outside it are the owner's list from step 4.
+- Does `python -I _tools/links.py` pass (or, with no Python, does every link you follow resolve)? After a restructure, it shows every link and contract input inside the tree still resolves; consumers outside it are the owner's list from step 4.
 - Does one contract plus its inputs stay under about 8,000 tokens?
 - Is every broken invariant explained where it breaks?
 
@@ -117,5 +118,5 @@ Then run the form's own checks, in its reference. If a step fails, fix the struc
 - [references/forms.md](references/forms.md): the five forms in depth: skeletons, moves, failure modes. Read at step 2 of Build or Restructure.
 - [references/system-map.md](references/system-map.md): the audit pipeline for a System map. Read when that form is chosen.
 - [references/bundle-from-sources.md](references/bundle-from-sources.md): building a Knowledge bundle from transcripts, interviews or research, with every quote checked. Read when that variant is chosen.
-- [assets/templates/](assets/templates/): copyable starters. Any form: `CLAUDE.md`, `CONTEXT.md`, `stage-CONTEXT.md`, `questionnaire.md`. Context map: `context-map-node.md`, `context-map-schema.md`. System map: `object.md`, `process.md`. Bundle from sources: `concept.md`, `source.md`, `plan.md`, `claim.md`, `bundle-schema.md`, `keep-out.txt`.
-- [assets/tools/](assets/tools/): standard-library Python, copied into a workspace's `_tools/`. `links.py` checks that links and input paths resolve (`--graph` also writes the graph); `viz.py` draws one or more graphs as `viz.html`; `index.py` writes `_index.md` from the notes; `quotes.py` checks quotes against their sources and keeps keep-out phrases out.
+- [assets/templates/](assets/templates/): copyable starters. Any form: `entry.md` (copied to the root as `AGENTS.md`), `CONTEXT.md`, `stage-CONTEXT.md`, `questionnaire.md`. Context map: `context-map-node.md`, `context-map-schema.md`. System map: `object.md`, `process.md`. Bundle from sources: `concept.md`, `source.md`, `plan.md`, `claim.md`, `bundle-schema.md`, `keep-out.txt`.
+- [scripts/](scripts/): optional standard-library Python, copied into a workspace's `_tools/`. `links.py` checks that links and input paths resolve (`--graph` also writes the graph); `viz.py` draws one or more graphs as `viz.html`; `index.py` writes `_index.md` from the notes; `quotes.py` checks quotes against their sources and keeps keep-out phrases out.

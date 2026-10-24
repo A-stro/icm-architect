@@ -30,7 +30,7 @@ except Exception:
     pass
 
 SKIP_DIRS = {"raw", "_meta", "_tools", "_templates", ".git"}
-NOT_NOTES = {"index.md", "_index.md", "log.md", "claude.md", "agents.md", "context.md"}
+NOT_NOTES = {"index.md", "_index.md", "log.md", "agents.md", "claude.md", "gemini.md", "context.md"}
 TIME = r"\d+(?::\d+)+"
 QUOTE = re.compile(r'"([^"\n]+?)"\s*\(([A-Za-z0-9_.-]+)(?:\s+([^)]*))?\)')
 ANY_QUOTE = re.compile(r'"([^"\n]+)"')

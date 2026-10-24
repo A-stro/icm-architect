@@ -10,7 +10,7 @@ The paper's canonical shape. The same sequence runs weekly or daily with differe
 
 ```
 workspace/
-├─ CLAUDE.md               identity + routing table
+├─ AGENTS.md               identity + routing table
 ├─ CONTEXT.md              the pipeline in one screen
 ├─ stages/
 │  ├─ 01_research/   {CONTEXT.md, references/, output/}
@@ -38,7 +38,7 @@ Nothing "runs" to completion; records (people, clients, sessions, deals) get cre
 
 ```
 workspace/
-├─ CLAUDE.md               identity + routing
+├─ AGENTS.md               identity + routing
 ├─ CONTEXT.md              the record shape and its lifecycle
 ├─ _shared/                factory: the method, rules, shared knowledge
 ├─ _templates/
@@ -64,7 +64,7 @@ The deliverable is a navigable body of knowledge: a brain, a domain wiki, a mode
 
 ```
 workspace/
-├─ CLAUDE.md
+├─ AGENTS.md
 ├─ corpus/                 raw sources; a source with no note in the bundle is unprocessed
 ├─ extraction/             the factory: an ICM Pipeline whose output is the bundle
 └─ bundle/                 the product:
@@ -91,7 +91,7 @@ The subject is a company or team: who does what, what data moves where, what's r
 
 ```
 workspace/
-├─ CLAUDE.md               entry
+├─ AGENTS.md               entry
 ├─ CONTEXT.md              how to walk the map
 ├─ _meta/                  the rules: schema.md, maturity-levels.md, ritual docs
 ├─ teams/
@@ -102,7 +102,7 @@ workspace/
 │     ├─ processes/        workflow nodes (the workhorses)
 │     └─ data/             data-<thing>.md asset nodes
 ├─ patterns/               cross-team patterns, written bottom-up only
-└─ dashboards/             00-tracker.md … live queries over frontmatter
+└─ dashboards/             00-tracker.md … live queries over frontmatter (Obsidian Dataview, if the map is a vault)
 ```
 
 **Defining moves:**

@@ -26,13 +26,13 @@ Product language and file/type names often disagree. State both once in the cata
 
 ## Where it lives
 
-Propose before writing. Prefer a `map/` shelf next to existing orientation (`developer-docs/`, `docs/`, vault root) so the subject's entry file can add one routing row. Do not drop a map inside `src/` or scatter cards through the tree you are mapping. The map's entry file is `map/CLAUDE.md`.
+Propose before writing. Prefer a `map/` shelf next to existing orientation (`developer-docs/`, `docs/`, vault root) so the subject's entry file (`AGENTS.md`, `CLAUDE.md` or whatever it already uses) can add one routing row. Do not drop a map inside `src/` or scatter cards through the tree you are mapping. The map's entry file is `map/AGENTS.md`.
 
 ## Target tree (smallest that carries the work)
 
 ```
 map/
-├─ CLAUDE.md              L0 catalog
+├─ AGENTS.md              L0 catalog
 ├─ CONTEXT.md             how to walk; the universes; name collisions
 ├─ _meta/schema.md        closed node types
 ├─ _templates/            object.md, process.md
@@ -58,7 +58,7 @@ On a code-heavy tree, an AST graph tool (e.g. `graphify extract --code-only`: lo
 
 ### 1 — Catalog
 
-Write `CLAUDE.md`, `CONTEXT.md`, the schema, templates, and a stub card (frontmatter only, `status: stub`) for every noun you will not fill yet. Run `python -I _tools/index.py objects/<cluster>` for each cluster. Wire one routing row from the subject's existing entry file. Walk: "where do I go to understand X?" lands in two hops.
+Write `AGENTS.md`, `CONTEXT.md`, the schema, templates, and a stub card (frontmatter only, `status: stub`) for every noun you will not fill yet. Run `python -I _tools/index.py objects/<cluster>` for each cluster. Wire one routing row from the subject's existing entry file. Walk: "where do I go to understand X?" lands in two hops.
 
 ### 2 — Nouns (objects)
 
@@ -106,7 +106,7 @@ After the first fill, check the load-bearing claims again (especially Hits / Doe
 A cold agent, no memory of the subject:
 
 1. Open the subject's entry file. Is the map one hop away?
-2. Open `map/CLAUDE.md`. Can it say what the colliding names mean without opening a card?
+2. Open `map/AGENTS.md`. Can it say what the colliding names mean without opening a card?
 3. Open one object card. Does it cite source, state the why, and give a first-order waterfall?
 4. From `effects/CONTEXT.md`, can it name what a stated change hits and what it does not?
 5. Follow one `See` link. Does it land on source, not another essay?

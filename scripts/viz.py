@@ -5,8 +5,8 @@
 
 Writes viz.html beside the first graph file unless -o names another path. Standard library only.
 The page loads cytoscape and marked from jsDelivr, so viewing it needs the internet.
-- A node is a .md file; catalogs and logs (CLAUDE.md, AGENTS.md, index.md, _index.md, log.md)
-  are left out because they link to everything.
+- A node is a .md file; catalogs and logs (AGENTS.md and its pointers, index.md, _index.md,
+  log.md) are left out because they link to everything.
 - Colors follow the frontmatter type, most common type first. The first node shown is the
   most-linked one.
 - Draw several graph files together and the links between them become edges.
@@ -25,7 +25,7 @@ except Exception:
 
 PALETTE = ["#1d4ed8", "#15803d", "#c2410c", "#7e22ce", "#b45309", "#0e7490",
            "#b91c1c", "#0f766e", "#ea580c", "#475569", "#be185d", "#4d7c0f"]
-CATALOGS = {"claude.md", "agents.md", "index.md", "_index.md", "log.md"}
+CATALOGS = {"agents.md", "claude.md", "gemini.md", "index.md", "_index.md", "log.md"}
 LINK = re.compile(r"\[([^\]]*)\]\((<[^>]+>|[^)\s]+)\)")
 
 
@@ -76,7 +76,7 @@ def main():
     folders = [root.name for root, _, _ in graphs]
     ids, nodes, names = {}, [], []
     for root, items, _ in graphs:
-        names.append(heading_of(root / "CLAUDE.md") or heading_of(root / "index.md") or root.name)
+        names.append(heading_of(root / "AGENTS.md") or heading_of(root / "CLAUDE.md") or heading_of(root / "index.md") or root.name)
         prefix = root.name if folders.count(root.name) == 1 else f"{root.parent.name}/{root.name}"
         for n in items:
             if Path(n["node"]).name.lower() in CATALOGS:
