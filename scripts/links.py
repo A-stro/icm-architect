@@ -7,7 +7,8 @@ ROOT defaults to the folder that holds _tools/. Standard library only.
 
 Checks every .md file outside dot-folders, node_modules/, _archive/, _templates/, raw/ and any
 folder named with --skip:
-  - markdown links [text](path), and .md paths in consumes: / produces: frontmatter.
+  - markdown links [text](path), .md paths in consumes: / produces: frontmatter, and import
+    lines such as @AGENTS.md (the one-line pointers CLAUDE.md and GEMINI.md hold).
     Web links, #anchors, {placeholders} and [[wikilinks]] are not checked.
   - backticked paths in list items under an Inputs heading, relative to the file or to ROOT.
     A reference (every-run) input must exist; any other input passes if its folder exists,
@@ -35,6 +36,7 @@ LINK = re.compile(r"\[[^\]]*\]\((<[^>]+>|[^)\s]+)\)")
 TICK = re.compile(r"`([^`\s]+)`")
 HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 LINK_KEYS = re.compile(r"^(?:consumes|produces):\s*(.+)$", re.M)
+IMPORT = re.compile(r"^@(\S+\.md)\s*$")
 
 
 def front_matter(text):
@@ -122,6 +124,9 @@ def main():
                 in_inputs = h.group(2).strip().lower() == "inputs"
                 title = title or (h.group(2) if h.group(1) == "#" else "")
                 continue
+            imp = IMPORT.match(line.strip())
+            if imp and not re.match(r"^(~|/|[A-Za-z]:)", imp.group(1)):  # home or absolute paths aren't the tree's
+                link(f, rel, imp.group(1))
             for m in LINK.finditer(line):
                 link(f, rel, m.group(1)[1:-1] if m.group(1).startswith("<") else m.group(1))
             if in_inputs and re.match(r"\s*[-*]\s", line):

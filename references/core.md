@@ -8,7 +8,7 @@ Contents: Five-layer hierarchy · Contract format · Naming · Library rules · 
 
 | Layer | Typical file | Question it answers | Role | Size |
 |---|---|---|---|---|
-| L0 | `CLAUDE.md` | Where am I? | routing | 300–800 tokens |
+| L0 | `AGENTS.md` | Where am I? | routing | 300–800 tokens |
 | L1 | root `CONTEXT.md` | Where do I go? | routing | 200–500 tokens |
 | L2 | stage `CONTEXT.md` | What do I do? | **the control point** | 200–500 tokens |
 | L3 | `references/`, `_shared/` | What rules apply? | factory (stable) | 500–2k tokens |
@@ -47,10 +47,11 @@ Do NOT load: other stages' references, earlier runs, the whole `_shared/` folder
 A person reads the draft aloud and confirms the argument order survived from research. Edit in place; the next stage reads whatever is here.
 ```
 
-Rules: inputs are exact backticked paths, split working vs reference. The process is numbered and short; constraints live in L3 files, not restated here, and a step that is code names its command. Commands run from the workspace root. Exactly one check, stated as something a person, a script or a small model does, never a vague "review". A check that isn't a person writes `check.md` beside the output, first line `pass` or `fail: <why>`.
+Rules: inputs are exact backticked paths, split working vs reference. The process is numbered and short; constraints live in L3 files, not restated here, and a step that is code names its command. Commands run from the workspace root and say `python`; use `python3` or `py` where that is the name. Exactly one check, stated as something a person, a script or a small model does, never a vague "review". A check that isn't a person writes `check.md` beside the output, first line `pass` or `fail: <why>`.
 
 ## Naming
 
+- The entry file is `AGENTS.md`. A tool that reads another name gets a one-line pointer, never a second copy (syntax as of October 2026): `CLAUDE.md` holds `@AGENTS.md` for Claude Code; `GEMINI.md` holds `@./AGENTS.md` for Gemini CLI; anything else gets a file that says "Read AGENTS.md first."
 - Stage folders: `NN_kebab-name` (`01_research`). Ordinal-only prefixes (`00-tracker.md`) for ordered files inside a folder.
 - Underscore folders are about the workspace, not of the work, and sort to the top: `_shared/` (the factory), `_templates/`, `_tools/` (scripts), `_meta/` (schema and rules), `_archive/`.
 - Records and nodes: kebab-case slugs for machine-facing files, or Title Case where a person browses daily (an Obsidian vault). Pick one per workspace and write the choice into the schema; drift between schema and files is the most common decay.
